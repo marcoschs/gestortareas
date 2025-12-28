@@ -18,7 +18,22 @@
 
 # Base de datos - MariaDB
 * Servidor: grupofmo.com
-  
+* 
+# Funcionamiento del proyecto
+Es necesario crear un archivo .env dentro del directorio backend que contenga lo siguiente:
+
+```
+PORT=5555
+DB_HOST=grupofmo.com
+DB_PORT=3306
+DB_NAME=Consultar nombre de la base
+DB_USER=Consultar usuario
+DB_PASS=Consultar clave
+
+TABLE_PREFIX=ap_
+CORS_ORIGIN=*
+```
+
 ### Cómo usar el Proyecto
 * Clonar el repositorio
 ```
