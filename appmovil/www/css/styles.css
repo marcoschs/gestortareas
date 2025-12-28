@@ -11,5 +11,5 @@ button.secondary { background:#374151; }
 button[disabled] { opacity: .5; cursor: not-allowed; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: left; }
-.hint { color: #e5e7eb; margin: 8px 0 0; }
+.hint { color: #e5e7eb; margin: 8px 0 0; word-break: break-word; }
 .actions button { background: #111827; margin-right: 6px; }

@@ -19,6 +19,7 @@
     "plugins": {}
   },
   "devDependencies": {
-    "cordova-android": "^14.0.1"
+    "cordova-android": "^14.0.1",
+    "cordova-plugin-preferences": "^1.0.3"
   }
 }

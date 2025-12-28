@@ -3,16 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Catálogo de Libros</title>
+  <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' data: gap: http://appsmoviles.grupofmo.com:5555 https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline';
+               connect-src 'self' http://appsmoviles.grupofmo.com:5555;
+               img-src 'self' data:;
+               style-src 'self' 'unsafe-inline';
+               script-src 'self' 'unsafe-inline' 'unsafe-eval';">
+
+  <title>Catálogo de Libros (Cordova)</title>
   <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
 <header class="top">
-  <h1>Catálogo de Libros (Plantilla)</h1>
+  <h1>Catálogo de Libros (Cordova)</h1>
+
   <div class="row">
-    <input id="apiBase" placeholder="API Base (ej: https://tu-dominio.com)" />
+    <input id="apiBase" placeholder="API Base" />
     <button id="btnSaveApi">Guardar API</button>
+    <button id="btnTest" class="secondary">Probar conexión</button>
   </div>
+
   <p class="hint" id="msg"></p>
 </header>
 
@@ -54,6 +64,8 @@
   </section>
 </main>
 
+<!-- Cordova lo inyecta en runtime -->
+<script src="cordova.js"></script>
 <script src="./js/app.js"></script>
 </body>
 </html>

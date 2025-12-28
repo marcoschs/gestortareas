@@ -1,10 +1,20 @@
+const DEFAULT_API_BASE = "http://appsmoviles.grupofmo.com:5555";
+
 const $ = (id) => document.getElementById(id);
 
-function setMsg(t) { $("msg").textContent = t || ""; }
+function setMsg(t) {
+  $("msg").textContent = t || "";
+}
+
+function normalizeBase(url) {
+  return (url || "").trim().replace(/\/$/, "");
+}
 
 function getApiBase() {
-  return (localStorage.getItem("apiBase") || "http://localhost:3000").replace(/\/$/, "");
+  const saved = localStorage.getItem("apiBase");
+  return normalizeBase(saved || DEFAULT_API_BASE);
 }
+
 function apiUrl(path) {
   return `${getApiBase()}/api/v1/${path}`;
 }
@@ -21,109 +31,195 @@ function resetForm() {
   $("btnCancel").disabled = true;
 }
 
-async function loadBooks() {
-  const res = await fetch(apiUrl("books"));
-  const rows = await res.json();
+async function safeJson(res) {
+  const text = await res.text();
+  try { return JSON.parse(text); } catch { return text; }
+}
 
-  $("tbody").innerHTML = rows.map(b => `
-    <tr>
-      <td>${b.id}</td>
-      <td>${b.title}</td>
-      <td>${b.author}</td>
-      <td>${b.year ?? ""}</td>
-      <td>${b.isbn ?? ""}</td>
-      <td class="actions">
-        <button onclick="editBook(${b.id})">Editar</button>
-        <button onclick="deleteBook(${b.id})">Eliminar</button>
-      </td>
-    </tr>
-  `).join("");
+async function testHealth() {
+  try {
+    setMsg("Probando conexión...");
+    const r = await fetch(apiUrl("health"), { method: "GET" });
+    const data = await safeJson(r);
+
+    if (!r.ok) {
+      setMsg(`HEALTH FAIL HTTP ${r.status}: ${typeof data === "string" ? data : JSON.stringify(data)}`);
+      return;
+    }
+    setMsg(`HEALTH OK: ${typeof data === "string" ? data : JSON.stringify(data)}`);
+  } catch (e) {
+    setMsg(`HEALTH ERROR: ${e && e.message ? e.message : e}`);
+  }
+}
+
+async function loadBooks() {
+  try {
+    const r = await fetch(apiUrl("books"), { method: "GET" });
+    const data = await safeJson(r);
+    if (!r.ok) {
+      setMsg(`Error cargando (HTTP ${r.status}): ${typeof data === "string" ? data : JSON.stringify(data)}`);
+      return;
+    }
+
+    const rows = Array.isArray(data) ? data : [];
+    $("tbody").innerHTML = rows.map(b => `
+      <tr>
+        <td>${b.id}</td>
+        <td>${b.title}</td>
+        <td>${b.author}</td>
+        <td>${b.year ?? ""}</td>
+        <td>${b.isbn ?? ""}</td>
+        <td class="actions">
+          <button onclick="editBook(${b.id})">Editar</button>
+          <button onclick="deleteBook(${b.id})">Eliminar</button>
+        </td>
+      </tr>
+    `).join("");
+
+    setMsg(`Cargados ${rows.length} registros. API: ${getApiBase()}`);
+  } catch (e) {
+    setMsg(`Error de red: ${e && e.message ? e.message : e}`);
+  }
 }
 
 async function createBook() {
-  setMsg("");
-  const payload = {
-    title: $("title").value.trim(),
-    author: $("author").value.trim(),
-    year: $("year").value ? Number($("year").value) : null,
-    isbn: $("isbn").value.trim() || null
-  };
-  if (!payload.title || !payload.author) return setMsg("Título y autor son obligatorios.");
+  try {
+    setMsg("");
 
-  const res = await fetch(apiUrl("books"), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+    const payload = {
+      title: $("title").value.trim(),
+      author: $("author").value.trim(),
+      year: $("year").value ? Number($("year").value) : null,
+      isbn: $("isbn").value.trim() || null
+    };
 
-  if (!res.ok) return setMsg("Error al crear.");
-  resetForm();
-  await loadBooks();
+    if (!payload.title || !payload.author) {
+      setMsg("Título y autor son obligatorios.");
+      return;
+    }
+
+    const r = await fetch(apiUrl("books"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await safeJson(r);
+    if (!r.ok) {
+      setMsg(`Error creando (HTTP ${r.status}): ${typeof data === "string" ? data : JSON.stringify(data)}`);
+      return;
+    }
+
+    resetForm();
+    await loadBooks();
+  } catch (e) {
+    setMsg(`Error de red al crear: ${e && e.message ? e.message : e}`);
+  }
 }
 
 async function editBook(id) {
-  setMsg("");
-  const res = await fetch(apiUrl(`books/${id}`));
-  if (!res.ok) return setMsg("No encontrado.");
+  try {
+    setMsg("");
 
-  const b = await res.json();
-  $("bookId").value = b.id;
-  $("title").value = b.title ?? "";
-  $("author").value = b.author ?? "";
-  $("year").value = b.year ?? "";
-  $("isbn").value = b.isbn ?? "";
+    const r = await fetch(apiUrl(`books/${id}`), { method: "GET" });
+    const b = await safeJson(r);
+    if (!r.ok) {
+      setMsg(`No encontrado (HTTP ${r.status}): ${typeof b === "string" ? b : JSON.stringify(b)}`);
+      return;
+    }
 
-  $("formTitle").textContent = `Editando #${b.id}`;
-  $("btnCreate").disabled = true;
-  $("btnUpdate").disabled = false;
-  $("btnCancel").disabled = false;
+    $("bookId").value = b.id;
+    $("title").value = b.title ?? "";
+    $("author").value = b.author ?? "";
+    $("year").value = b.year ?? "";
+    $("isbn").value = b.isbn ?? "";
+
+    $("formTitle").textContent = `Editando #${b.id}`;
+    $("btnCreate").disabled = true;
+    $("btnUpdate").disabled = false;
+    $("btnCancel").disabled = false;
+  } catch (e) {
+    setMsg(`Error de red al editar: ${e && e.message ? e.message : e}`);
+  }
 }
 
 async function updateBook() {
-  setMsg("");
-  const id = $("bookId").value;
-  if (!id) return;
+  try {
+    setMsg("");
+    const id = $("bookId").value;
+    if (!id) return;
 
-  const payload = {
-    title: $("title").value.trim(),
-    author: $("author").value.trim(),
-    year: $("year").value ? Number($("year").value) : null,
-    isbn: $("isbn").value.trim() || null
-  };
+    const payload = {
+      title: $("title").value.trim(),
+      author: $("author").value.trim(),
+      year: $("year").value ? Number($("year").value) : null,
+      isbn: $("isbn").value.trim() || null
+    };
 
-  const res = await fetch(apiUrl(`books/${id}`), {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+    const r = await fetch(apiUrl(`books/${id}`), {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-  if (!res.ok) return setMsg("Error al actualizar.");
-  resetForm();
-  await loadBooks();
+    const data = await safeJson(r);
+    if (!r.ok) {
+      setMsg(`Error actualizando (HTTP ${r.status}): ${typeof data === "string" ? data : JSON.stringify(data)}`);
+      return;
+    }
+
+    resetForm();
+    await loadBooks();
+  } catch (e) {
+    setMsg(`Error de red al actualizar: ${e && e.message ? e.message : e}`);
+  }
 }
 
 async function deleteBook(id) {
-  if (!confirm("¿Eliminar libro?")) return;
-  const res = await fetch(apiUrl(`books/${id}`), { method: "DELETE" });
-  if (!res.ok) return setMsg("Error al eliminar.");
-  await loadBooks();
+  try {
+    if (!confirm("¿Eliminar libro?")) return;
+
+    const r = await fetch(apiUrl(`books/${id}`), { method: "DELETE" });
+    const data = await safeJson(r);
+
+    if (!r.ok && r.status !== 204) {
+      setMsg(`Error eliminando (HTTP ${r.status}): ${typeof data === "string" ? data : JSON.stringify(data)}`);
+      return;
+    }
+
+    await loadBooks();
+  } catch (e) {
+    setMsg(`Error de red al eliminar: ${e && e.message ? e.message : e}`);
+  }
 }
 
+// Exponer para botones inline
 window.editBook = editBook;
 window.deleteBook = deleteBook;
 
-window.addEventListener("DOMContentLoaded", async () => {
+function initUI() {
+  // Set default visible apiBase
   $("apiBase").value = getApiBase();
 
   $("btnSaveApi").addEventListener("click", () => {
-    localStorage.setItem("apiBase", $("apiBase").value.trim());
-    setMsg("API Base guardada.");
+    const v = normalizeBase($("apiBase").value || DEFAULT_API_BASE);
+    localStorage.setItem("apiBase", v);
+    $("apiBase").value = v;
+    setMsg("API guardada: " + v);
   });
 
-  $("btnCreate").addEventListener("click", () => createBook());
-  $("btnUpdate").addEventListener("click", () => updateBook());
+  $("btnTest").addEventListener("click", testHealth);
+
+  $("btnCreate").addEventListener("click", createBook);
+  $("btnUpdate").addEventListener("click", updateBook);
   $("btnCancel").addEventListener("click", () => resetForm());
 
   resetForm();
-  await loadBooks();
-});
+  // Probar y cargar
+  testHealth().then(loadBooks);
+}
+
+// Cordova
+document.addEventListener("deviceready", initUI, false);
+// Web normal
+window.addEventListener("DOMContentLoaded", () => { if (!window.cordova) initUI(); });
