@@ -1,5 +1,5 @@
 // ===== CONFIGURACIÓN =====
-const API_URL = 'http://localhost:5555/api/v1';
+const API_URL = 'http://localhost:7055/api/v1';
 
 // ===== UTILIDADES =====
 function showAlert(message, type = 'info') {
