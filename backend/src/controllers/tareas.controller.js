@@ -47,9 +47,7 @@ module.exports = (models) => {
           esta_archivada,
           buscar,
           ordenar_por,
-          orden,
-          pagina,
-          limite
+          orden
         } = req.query;
 
         // Construir filtros
@@ -88,27 +86,15 @@ module.exports = (models) => {
           order.push(['numero_orden', 'ASC'], ['fecha_creacion', 'DESC']);
         }
 
-        // Paginación
-        const paginaActual = parseInt(pagina) || 1;
-        const limiteRegistros = parseInt(limite) || 10;
-        const offset = (paginaActual - 1) * limiteRegistros;
-
-        // Consultar tareas
-        const { count, rows: tareas } = await Tarea.findAndCountAll({
+        // Consultar TODAS las tareas sin límite
+        const tareas = await Tarea.findAll({
           where,
-          order,
-          limit: limiteRegistros,
-          offset
+          order
         });
 
         return respuestaExito(res, 200, "Tareas obtenidas exitosamente", {
           tareas,
-          paginacion: {
-            total: count,
-            pagina: paginaActual,
-            limite: limiteRegistros,
-            total_paginas: Math.ceil(count / limiteRegistros)
-          }
+          total: tareas.length
         });
       } catch (error) {
         next(error);
