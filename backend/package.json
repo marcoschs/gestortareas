@@ -13,7 +13,7 @@
     "express",
     "sequelize"
   ],
-  "author": "Grupo 1: Marcos, Cristian, Beenjy, Cristhoffer",
+  "author": "Grupo 1: Marcos, Cristian, Beenjy, Cristhoffer, Jean",
   "license": "ISC",
   "dependencies": {
     "@emailjs/nodejs": "^5.0.2",
