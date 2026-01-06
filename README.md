@@ -18,7 +18,7 @@
 
 # Base de datos - MariaDB
 * Servidor: grupofmo.com
-* 
+
 # Funcionamiento del proyecto
 Es necesario crear un archivo .env dentro del directorio backend que contenga lo siguiente:
 
@@ -106,4 +106,5 @@ El archivo .apk se genera dentro del directorio:
 platforms/android/app/build/outputs/apk/debug
 ```
 
-
+### Nota importante
+El proyecto está funcionando con SSL, se hicieron los cambios necesarios para que funcione la aplicación tanto en la versión web como móvil.
