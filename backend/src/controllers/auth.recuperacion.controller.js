@@ -38,7 +38,7 @@ module.exports = (models) => {
         }
 
         // Generar token único
-        const token = crypto.randomBytes(32).toString('hex');
+        const token = crypto.randomBytes(4).toString('hex').toUpperCase();
         
         // Calcular fecha de expiración (10 minutos desde ahora)
         const fechaExpiracion = new Date();
