@@ -10,6 +10,14 @@
 * mariadb 3.4.5
 * mysql2 3.16.0
 * sequelize 6.37.7
+* emailjs 5.0.2
+* axios 1.13.2
+* bcryptjs 2.4.3
+* crypto 1.0.1
+* jsonwebtoken 9.0.2
+* swagger-jsdoc 6.2.8
+* swagger-ui-express 5.0.1
+
 # Tecnologías usadas en el Frontend
 * HTML/CSS/Javascript
 
@@ -30,14 +38,13 @@ DB_NAME=Consultar nombre de la base
 DB_USER=Consultar usuario
 DB_PASS=Consultar clave
 
-TABLE_PREFIX=ap_
 CORS_ORIGIN=*
 ```
 
 ### Cómo usar el Proyecto
 * Clonar el repositorio
 ```
-git clone https://github.com/elgabo82/plantilla-aplicaciones-moviles.git
+git clone https://github.com/marcoschs/gestortareas
 ```
 * Crear una rama localmente
 * Instalar todos los paquetes necesarios
