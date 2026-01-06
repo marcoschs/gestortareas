@@ -19,6 +19,8 @@ class EmailService {
         template_params: templateParams
       };
 
+      const backendUrl = process.env.BACKEND_URL
+
       // Simular que viene de un navegador
       const response = await axios.post(
         'https://api.emailjs.com/api/v1.0/email/send',
@@ -27,8 +29,8 @@ class EmailService {
           headers: {
             'Content-Type': 'application/json',
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Origin': 'http://localhost:5555',
-            'Referer': 'http://localhost:5555/'
+            'Origin': 'backendUrl',
+            'Referer': `${backendUrl}/`
           }
         }
       );
