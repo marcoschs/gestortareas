@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Gestor de Tareas</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400&display=swap"
+    rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0F172A;
+      min-height: 100vh;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-y: auto;
+      /* Permitir scroll vertical */
+    }
+
+    /* === FONDO PRINCIPAL (único elemento con efecto pesado) === */
+    .background-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      /* Imagen de fondo técnica */
+      background:
+        linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    /* Gradientes decorativos sobre el fondo */
+    .background-layer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .auth-container {
+      position: relative;
+      z-index: 10;
+      padding: 2rem;
+      width: 100%;
+      max-width: 450px;
+    }
+
+    /* === TARJETA CON GLASSMORPHISM CORRECTO === */
+    .auth-card {
+      position: relative;
+      border-radius: 24px;
+      padding: 2.5rem;
+      overflow: hidden;
+      /* CRUCIAL: recorta el blur del ::before */
+    }
+
+    /* Pseudoelemento para el efecto glass (separado del contenido) */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      /* Blur moderado */
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      z-index: -1;
+      /* DETRÁS del contenido */
+    }
+
+    /* Sombra en elemento separado para evitar conflictos */
+    .auth-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-logo {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      font-size: 2.5rem;
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.4);
+    }
+
+    .auth-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .tech-slogan {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      display: block;
+      margin-top: 0.5rem;
+    }
+
+    .auth-header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    /* === FORMULARIO === */
+    .auth-form {
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+      background: rgba(15, 23, 42, 0.6);
+      border: 2px solid rgba(99, 102, 241, 0.3);
+      color: #f8fafc;
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      /* SIN backdrop-filter aquí para evitar apilamiento */
+    }
+
+    .form-control:focus {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+      color: #f8fafc;
+    }
+
+    .form-control::placeholder {
+      color: #64748b;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 0.85rem 1.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+      /* SIN backdrop-filter */
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #94a3b8;
+      font-size: 0.9rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-footer a {
+      color: #00D9FF;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .auth-footer a:hover {
+      color: #67e8f9;
+      text-decoration: underline;
+    }
+
+    /* Alerta */
+    .alert {
+      border-radius: 12px;
+      border: none;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-left: 4px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border-left: 4px solid #22c55e;
+      color: #86efac;
+    }
+
+    /* === ELEMENTOS DECORATIVOS (sin blur) === */
+    .decorative-shape {
+      position: fixed;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+      z-index: 1;
+      /* SIN filter ni backdrop-filter */
+    }
+
+    .shape-1 {
+      width: 300px;
+      height: 300px;
+      top: -100px;
+      right: -100px;
+    }
+
+    .shape-2 {
+      width: 200px;
+      height: 200px;
+      bottom: 10%;
+      left: -50px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 2rem 1.5rem;
+      }
+
+      .auth-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Capa de fondo (único elemento con imagen/blur pesado) -->
+  <div class="background-layer"></div>
+
+  <!-- Elementos decorativos simples -->
+  <div class="decorative-shape shape-1"></div>
+  <div class="decorative-shape shape-2"></div>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-logo">📋</div>
+        <h1>Bienvenido</h1>
+        <span class="tech-slogan">Systematize Your Clarity</span>
+        <p>Ingresa tus credenciales para continuar</p>
+      </div>
+
+      <div id="alertContainer"></div>
+
+      <form class="auth-form" id="loginForm">
+        <div class="mb-3">
+          <label for="email" class="form-label">CORREO ELECTRÓNICO</label>
+          <input type="email" class="form-control" id="email" placeholder="usuario@dominio.com" required
+            autocomplete="email">
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">CONTRASEÑA</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="password" placeholder="Tu contraseña" required
+              autocomplete="current-password">
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+              👁️
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+          INICIAR SESIÓN
+        </button>
+      </form>
+
+      <!-- Separador -->
+      <div class="text-center my-4" style="position: relative; z-index: 1;">
+        <span
+          style="display: inline-block; width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);"></span>
+      </div>
+
+      <!-- Botón de Registro -->
+      <div class="text-center" style="position: relative; z-index: 1;">
+        <a href="registro.html" class="btn btn-outline-light w-100"
+          style="border-radius: 12px; padding: 0.85rem 1.5rem; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); transition: all 0.3s ease;">
+          ¿No tienes cuenta? <strong>REGÍSTRATE</strong>
+        </a>
+      </div>
+
+      <div class="auth-footer">
+        <p style="margin-top: 1rem; font-size: 0.8rem;">¿Olvidaste tu contraseña? <a href="recuperar.html">Recuperar</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Auth JS -->
+  <script src="js/auth.js"></script>
+
+  <!-- Toggle Password Visibility -->
+  <script>
+    document.getElementById('togglePassword')?.addEventListener('click', function () {
+      const pwd = document.getElementById('password');
+      pwd.type = pwd.type === 'password' ? 'text' : 'password';
+      this.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+    });
+  </script>
+</body>
+
+</html>

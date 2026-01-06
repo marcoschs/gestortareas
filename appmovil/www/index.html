@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Tareas - Gestor de Tareas</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/tags.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <span class="brand-icon">📋</span> Gestor de Tareas
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Tareas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="perfil.html">Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light btn-sm" id="logoutBtn">Cerrar Sesión</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Columna Principal -->
+            <div class="col-lg-12">
+                <!-- Header con filtros -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap mb-4">
+                    <h1 class="mb-3 mb-md-0">📋 <span class="gradient-text">Mis Tareas</span> 📋</h1>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                        <div class="btn-group filter-group" role="group">
+                            <button type="button" class="btn btn-filter active" data-filter="all">Todas</button>
+                            <button type="button" class="btn btn-filter" data-filter="pending">Pendientes</button>
+                            <button type="button" class="btn btn-filter" data-filter="completed">Completadas</button>
+                            <button type="button" class="btn btn-filter" data-filter="overdue">Vencidas</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas -->
+                <div id="alertContainer"></div>
+
+                <!-- Estadísticas Rápidas -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-primary" onclick="filterByStatCard('all')" style="cursor: pointer;"
+                            title="Ver todas las tareas">
+                            <div class="stat-icon">📋</div>
+                            <div class="stat-content">
+                                <h3 id="totalTasks">0</h3>
+                                <p>Total de Tareas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-success" onclick="filterByStatCard('completed')"
+                            style="cursor: pointer;" title="Ver tareas completadas">
+                            <div class="stat-icon">✅</div>
+                            <div class="stat-content">
+                                <h3 id="completedTasks">0</h3>
+                                <p>Completadas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-warning" onclick="filterByStatCard('pending')"
+                            style="cursor: pointer;" title="Ver tareas pendientes">
+                            <div class="stat-icon">⏳</div>
+                            <div class="stat-content">
+                                <h3 id="pendingTasks">0</h3>
+                                <p>Pendientes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card stat-danger" onclick="filterByStatCard('overdue')"
+                            style="cursor: pointer;" title="Ver tareas vencidas">
+                            <div class="stat-icon">🚨</div>
+                            <div class="stat-content">
+                                <h3 id="overdueTasks">0</h3>
+                                <p>Vencidas</p>
+                            </div>
+                        </div>
+                    </div>
+                </div><br>
+
+                <!-- Grid de Tareas -->
+                <div class="row g-3" id="tasksGrid">
+                    <!-- Las tareas se cargarán dinámicamente -->
+                </div>
+
+                <!-- Estado vacío -->
+                <div class="empty-state text-center py-5" id="emptyState" style="display: none;">
+                    <div class="empty-icon">📝</div>
+                    <h3>No hay tareas</h3>
+                    <p class="text-muted">Haz clic en el botón + para crear tu primera tarea</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón Flotante -->
+    <button class="fab" id="addTaskBtn" title="Agregar nueva tarea">
+        <span>+</span>
+    </button>
+
+    <!-- Modal para Agregar/Editar Tarea -->
+    <div class="modal fade" id="taskModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-effect">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="modalTitle">Nueva Tarea</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="taskForm">
+                        <!-- Título -->
+                        <div class="mb-3">
+                            <label for="taskTitle" class="form-label">Título *</label>
+                            <input type="text" class="form-control" id="taskTitle" placeholder="Nombre de la tarea"
+                                required maxlength="200">
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="mb-3">
+                            <label for="taskDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="taskDescription" rows="3"
+                                placeholder="Detalles de la tarea (opcional)"></textarea>
+                        </div>
+
+                        <!-- Estado y Prioridad -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="taskStatus" class="form-label">Estado</label>
+                                <select class="form-select" id="taskStatus">
+                                    <option value="pendiente" selected>Pendiente</option>
+                                    <option value="en_progreso">En Progreso</option>
+                                    <option value="completada">Completada</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="taskPriority" class="form-label">Prioridad</label>
+                                <select class="form-select" id="taskPriority">
+                                    <option value="baja">Baja</option>
+                                    <option value="media" selected>Media</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="urgente">Urgente</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fechas -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="taskDueDate" class="form-label">Fecha de Vencimiento</label>
+                                <input type="datetime-local" class="form-control" id="taskDueDate">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="taskReminderDate" class="form-label">Fecha de Recordatorio</label>
+                                <input type="datetime-local" class="form-control" id="taskReminderDate">
+                            </div>
+                        </div>
+
+                        <!-- Etiquetas eliminadas -->
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary" id="saveTaskBtn">Guardar Tarea</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Gestión de Etiquetas -->
+    <div class="modal fade" id="tagModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-effect">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">Gestión de Etiquetas</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulario para crear etiqueta -->
+                    <form id="tagForm" class="mb-4">
+                        <div class="row">
+                            <div class="col-8">
+                                <input type="text" class="form-control" id="tagName" placeholder="Nombre de la etiqueta"
+                                    required maxlength="50">
+                            </div>
+                            <div class="col-4">
+                                <input type="color" class="form-control form-control-color w-100" id="tagColor"
+                                    value="#6366f1">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2 w-100">Crear Etiqueta</button>
+                    </form>
+
+                    <!-- Lista de etiquetas existentes -->
+                    <div id="tagsList">
+                        <!-- Las etiquetas se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación de Eliminación -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-effect">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">🗑️ Eliminar Tarea</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">¿Estás seguro de que deseas eliminar esta tarea?</p>
+                    <p class="text-muted small">La tarea será eliminada de tu lista.</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JS -->
+    <script src="js/tags.js"></script>
+    <script src="js/auth.js?v=2"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>

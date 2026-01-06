@@ -1,0 +1,519 @@
+/* ===== IMPORTACIONES (DEBEN ESTAR AL INICIO) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&display=swap');
+
+/* ===== VARIABLES DE DISEÑO VISUAL ===== */
+:root {
+    /* Paleta de Color Blocking */
+    --color-cyan: #00D9FF;
+    --color-pink: #FF406E;
+    --color-navy: #1E3A8A;
+    --color-turquoise: #14B8A6;
+    --color-purple: #A855F7;
+    --color-coral: #FF6B6B;
+    --color-mint: #4ECDC4;
+
+    /* Colores de fondo */
+    --bg-light: #F8F9FA;
+    --bg-dark: #0F172A;
+
+    /* Tipografía */
+    --font-serif: 'Playfair Display', 'Georgia', serif;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+
+    /* Espaciado */
+    --section-padding: 5rem 2rem;
+
+    /* Transiciones */
+    --transition-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --transition-liquid: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+/* Asegurar fondo visible inmediatamente */
+body {
+    background-color: #0F172A !important;
+    /* Forzar fondo oscuro */
+    color: white;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* ===== TIPOGRAFÍA ===== */
+h1,
+h2,
+h3 {
+    font-family: var(--font-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+}
+
+h2 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+h3 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+p,
+body {
+    font-family: var(--font-sans);
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.7;
+}
+
+/* ===== SECCIONES DE PANTALLA COMPLETA ===== */
+.fullscreen-section {
+    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    scroll-snap-align: start;
+    transition: all 1s var(--transition-liquid);
+}
+
+.scroll-container {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: 100vh;
+    scroll-behavior: smooth;
+}
+
+/* ===== COLOR BLOCKING ===== */
+.section-cyan {
+    background: var(--color-cyan);
+    color: var(--bg-dark);
+}
+
+.section-pink {
+    background: var(--color-pink);
+    color: white;
+}
+
+.section-navy {
+    background: var(--color-navy);
+    color: white;
+}
+
+.section-turquoise {
+    background: var(--color-turquoise);
+    color: var(--bg-dark);
+}
+
+.section-purple {
+    background: var(--color-purple);
+    color: white;
+}
+
+.section-coral {
+    background: var(--color-coral);
+    color: white;
+}
+
+.section-mint {
+    background: var(--color-mint);
+    color: var(--bg-dark);
+}
+
+/* ===== CONTENIDO DE SECCIONES ===== */
+.section-content {
+    max-width: 1200px;
+    width: 100%;
+    padding: 2rem;
+    z-index: 100;
+    /* Aumentado para asegurar que esté sobre las animaciones */
+    position: relative;
+    pointer-events: auto;
+    /* Asegurar interactividad explicita */
+}
+
+.section-content h1,
+.section-content h2 {
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s var(--transition-smooth);
+}
+
+.section-content p {
+    max-width: 600px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s var(--transition-smooth) 0.2s;
+}
+
+/* Animación cuando la sección es visible */
+.section-visible .section-content h1,
+.section-visible .section-content h2 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-visible .section-content p {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ===== ILUSTRACIONES Y ELEMENTOS DECORATIVOS ===== */
+.illustration-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    /* CRUCIAL: permite clicks a través de las ilustraciones */
+    z-index: 1;
+}
+
+/* ===== FONDO TÉCNICO ABSTRACTO ===== */
+.tech-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-color: var(--bg-dark);
+    background-image:
+        radial-gradient(at 0% 0%, rgba(0, 217, 255, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
+        linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)),
+        url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+    /* Imagen técnica abstracta */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+/* ===== EFECTO MATE TRANSLÚCIDO (FROSTED GLASS REFINADO) ===== */
+.glass-mate {
+    background: rgba(15, 23, 42, 0.65);
+    /* Más oscuro y opaco para efecto mate */
+    backdrop-filter: blur(25px) saturate(180%);
+    /* Blur intenso para efecto "hielo" */
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        0 4px 30px rgba(0, 0, 0, 0.3),
+        inset 0 0 20px rgba(255, 255, 255, 0.02);
+}
+
+/* Forzar interactividad en botones dentro de tarjetas */
+.auth-card,
+.modal-content,
+.card {
+    position: relative;
+    z-index: 1000;
+    /* Muy alto para garantizar click */
+    pointer-events: auto;
+}
+
+.floating-shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: float 20s infinite ease-in-out;
+}
+
+.floating-shape:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.floating-shape:nth-child(2) {
+    top: 60%;
+    right: 15%;
+    animation-delay: 5s;
+}
+
+.floating-shape:nth-child(3) {
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 10s;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(30px, -30px) rotate(5deg);
+    }
+
+    50% {
+        transform: translate(-20px, 20px) rotate(-5deg);
+    }
+
+    75% {
+        transform: translate(20px, 30px) rotate(3deg);
+    }
+}
+
+/* ===== BOTONES PILL-SHAPED ===== */
+.btn-pill {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    border: 2px solid currentColor;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-pill::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: currentColor;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s var(--transition-smooth), height 0.6s var(--transition-smooth);
+    z-index: -1;
+}
+
+.btn-pill:hover::before {
+    width: 300%;
+    height: 300%;
+}
+
+.btn-pill:hover {
+    color: var(--bg-dark);
+    border-color: transparent;
+}
+
+.section-navy .btn-pill:hover,
+.section-pink .btn-pill:hover,
+.section-purple .btn-pill:hover,
+.section-coral .btn-pill:hover {
+    color: white;
+}
+
+/* ===== MENÚ HAMBURGUESA ===== */
+.hamburger-menu {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s var(--transition-smooth);
+}
+
+.hamburger-menu:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: scale(1.1);
+}
+
+.hamburger-icon {
+    width: 24px;
+    height: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.hamburger-line {
+    width: 100%;
+    height: 2px;
+    background: white;
+    transition: all 0.3s var(--transition-smooth);
+    transform-origin: center;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(1) {
+    transform: translateY(9px) rotate(45deg);
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .hamburger-line:nth-child(3) {
+    transform: translateY(-9px) rotate(-45deg);
+}
+
+/* ===== NAVEGACIÓN OVERLAY ===== */
+.nav-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: var(--color-navy);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--transition-smooth);
+}
+
+.nav-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+.nav-menu li {
+    margin: 2rem 0;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.5s var(--transition-smooth);
+}
+
+.nav-overlay.active .nav-menu li {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.nav-overlay.active .nav-menu li:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.nav-overlay.active .nav-menu li:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.nav-overlay.active .nav-menu li:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.nav-overlay.active .nav-menu li:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+.nav-overlay.active .nav-menu li:nth-child(5) {
+    transition-delay: 0.5s;
+}
+
+.nav-menu a {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s var(--transition-smooth);
+    display: inline-block;
+}
+
+.nav-menu a:hover {
+    color: var(--color-cyan);
+    transform: translateX(20px);
+}
+
+/* ===== SCROLL INDICATOR ===== */
+.scroll-indicator {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 50px;
+    border: 2px solid currentColor;
+    border-radius: 25px;
+    opacity: 0.7;
+    z-index: 10;
+}
+
+.scroll-indicator::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 8px;
+    background: currentColor;
+    border-radius: 2px;
+    animation: scroll-down 2s infinite;
+}
+
+@keyframes scroll-down {
+    0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(20px);
+        opacity: 0;
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .fullscreen-section {
+        padding: 3rem 1.5rem;
+    }
+
+    .section-content {
+        padding: 1.5rem;
+    }
+
+    .hamburger-menu {
+        width: 50px;
+        height: 50px;
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+
+    .btn-pill {
+        padding: 0.875rem 2rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ACCESIBILIDAD ===== */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .scroll-container {
+        scroll-behavior: auto;
+    }
+}
