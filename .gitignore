@@ -3,6 +3,13 @@
 .env
 */node_modules/*
 
+*.sql
+*.sql.*
+.sql
+
+frontend/
+*/appmovil/*
+
 # Logs
 logs
 *.log
