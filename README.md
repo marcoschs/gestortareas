@@ -87,7 +87,7 @@ npm i -g cordova
 ```
 * Paso de generación
 ```
-cordova create appmovil com.grupofmo.catalogolibros CatalogoLibros
+cordova create appmovil com.grupofmo.gestortareas GestorTareas
 ```
 Dentro del directorio de la aplicación, realizar lo siguiente:
 ```
