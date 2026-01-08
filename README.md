@@ -1,6 +1,6 @@
-### Plantilla para proyectos finales
-* Proyecto de ejemplo sencillo y simple, incluye la creación de la aplicación móvil
-* Dominio de prueba: appsmoviles.grupofmo.com
+### Gestor de Tareas
+* Proyecto de Gestor de Tareas, incluye la creación de la aplicación móvil
+* Dominio: http://appmov1.grupofmo.com
 # Tecnologías usadas en el Backend
 * Node.js
 # Módulos
@@ -55,7 +55,6 @@ npm i
 
 # Para ejecutar el backend
 * Debe ejecutar el backend, se debe estar dentro del directorio del backend
-* Puerto de la configuración: 3000
 ```
 nodemon server.js
 ```
@@ -113,5 +112,5 @@ El archivo .apk se genera dentro del directorio:
 platforms/android/app/build/outputs/apk/debug
 ```
 
-### Nota importante
-El proyecto está funcionando con SSL, se hicieron los cambios necesarios para que funcione la aplicación tanto en la versión web como móvil.
+### Nota
+Para probar el apk, descargarla desde el siguiente link: https://drive.google.com/file/d/1ZaNZccCvsVa7xTQSQGJLq7WPZ4CJIXcx/view?usp=drive_link
