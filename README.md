@@ -1,6 +1,7 @@
 ### Gestor de Tareas
 * Proyecto de Gestor de Tareas, incluye la creación de la aplicación móvil
 * Dominio: http://appmov1.grupofmo.com
+* APK: https://drive.google.com/file/d/1ZaNZccCvsVa7xTQSQGJLq7WPZ4CJIXcx/view?usp=drive_link
 # Tecnologías usadas en el Backend
 * Node.js
 # Módulos
@@ -111,6 +112,3 @@ El archivo .apk se genera dentro del directorio:
 ```
 platforms/android/app/build/outputs/apk/debug
 ```
-
-### Nota
-Para probar el apk, descargarla desde el siguiente link: https://drive.google.com/file/d/1ZaNZccCvsVa7xTQSQGJLq7WPZ4CJIXcx/view?usp=drive_link
