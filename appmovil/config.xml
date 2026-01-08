@@ -1,29 +1,55 @@
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="com.grupofmo.appmovil" version="1.0.0">
-<name>GestorTareas</name>
-<description>Plantilla Cordova - Consumo API</description>
-<author email="soporte@grupofmo.com" href="https://grupofmo.com">GrupoFMO</author>
-<content src="index.html"/>
-<!--  Navegación y acceso (modo laboratorio)  -->
-<access origin="*"/>
-<allow-navigation href="*"/>
-<platform name="android">
-<!--  ✅ PERMISO INTERNET (por si no se está agregando)  -->
-<config-file target="AndroidManifest.xml" parent="/*">
-<uses-permission android:name="android.permission.INTERNET"/>
-</config-file>
-<!--  ✅ Permitir HTTP (cleartext)  -->
-<edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-<application android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config"/>
-</edit-config>
-<!--  Copiar archivo de seguridad a res/xml  -->
-<resource-file src="resources/android/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml"/>
-<!--  (opcional)  -->
-<preference name="android-minSdkVersion" value="24"/>
-<preference name="android-targetSdkVersion" value="35"/>
-<!--  Permitir tu host  -->
-<access origin="http://appsmoviles.grupofmo.com:5555"/>
-<allow-navigation href="http://appsmoviles.grupofmo.com:5555/*"/>
-<access origin="*"/>
-<allow-navigation href="*"/>
-</platform>
+<?xml version="1.0" encoding="utf-8"?>
+<widget
+    xmlns="http://www.w3.org/ns/widgets"
+    xmlns:cdv="http://cordova.apache.org/ns/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.grupofmo.appmovil"
+    version="1.0.0">
+
+    <name>GestorTareas</name>
+    <description>Plantilla Cordova - Consumo API</description>
+    <author email="soporte@grupofmo.com" href="https://grupofmo.com">GrupoFMO</author>
+
+    <!-- ARCHIVO PRINCIPAL -->
+    <content src="index.html" />
+
+    <!-- ACCESO GENERAL -->
+    <access origin="*" />
+    <allow-navigation href="*" />
+
+    <platform name="android">
+
+        <!-- 🔥 CLAVE PARA EVITAR MIXED CONTENT -->
+        <preference name="AndroidInsecureFileModeEnabled" value="true" />
+        <preference name="android-usesCleartextTraffic" value="true" />
+
+        <!-- PERMISO INTERNET -->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+
+        <!-- HTTP PERMITIDO -->
+        <edit-config
+            file="app/src/main/AndroidManifest.xml"
+            mode="merge"
+            target="/manifest/application">
+            <application
+                android:usesCleartextTraffic="true"
+                android:networkSecurityConfig="@xml/network_security_config" />
+        </edit-config>
+
+        <!-- NETWORK SECURITY CONFIG -->
+        <resource-file
+            src="resources/android/network_security_config.xml"
+            target="app/src/main/res/xml/network_security_config.xml" />
+
+        <!-- SDK -->
+        <preference name="android-minSdkVersion" value="24" />
+        <preference name="android-targetSdkVersion" value="35" />
+
+        <!-- TU BACKEND -->
+        <access origin="http://appmov1.grupofmo.com:7055" />
+        <allow-navigation href="http://appmov1.grupofmo.com:7055/*" />
+
+    </platform>
 </widget>
