@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Gestor de Tareas</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0F172A;
+            min-height: 100vh;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background:
+                linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+                url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .background-layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 50% 30%, rgba(245, 158, 11, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .auth-card {
+            position: relative;
+            border-radius: 24px;
+            padding: 2.5rem;
+            overflow: visible;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            z-index: -1;
+        }
+
+        .auth-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 50%;
+            font-size: 2.5rem;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.4);
+        }
+
+        .auth-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-slogan {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .auth-header p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .auth-form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(245, 158, 11, 0.3);
+            color: #f8fafc;
+            padding: 0.85rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+            color: #f8fafc;
+        }
+
+        .form-control::placeholder {
+            color: #64748b;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border: none;
+            padding: 0.85rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-footer a {
+            color: #f59e0b;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-footer a:hover {
+            color: #fbbf24;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            border-left: 4px solid #22c55e;
+            color: #86efac;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.15);
+            border-left: 4px solid #3b82f6;
+            color: #93c5fd;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .step.completed {
+            background: #22c55e;
+            color: white;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .tooltip-custom {
+            position: fixed; 
+            left: auto; 
+            bottom: auto; 
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid rgba(245, 158, 11, 0.5);
+            color: #f8fafc;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            margin-bottom: 0; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            min-width: 250px;
+        }
+
+        .tooltip-custom::after {
+            content: '';
+            position: absolute;
+            right: 100%; 
+            top: 50%;
+            transform: translateY(-50%);
+            border: 8px solid transparent;
+            border-right-color: rgba(15, 23, 42, 0.95);
+        }
+
+        .input-wrapper:hover .tooltip-custom,
+        .form-control:focus + .tooltip-custom {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .tooltip-custom ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            list-style: none;
+        }
+
+        .tooltip-custom li::before {
+            content: '✓';
+            color: #f59e0b;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+        @media (max-width: 768px) {
+            .tooltip-custom {
+                position: absolute !important;
+                left: 0 !important;
+                right: 0 !important;
+                top: calc(100% + 10px) !important;
+                bottom: auto !important;
+                transform: none !important;
+                min-width: auto;
+                white-space: normal;
+                width: 100%;
+            }
+
+            .tooltip-custom::after {
+                right: auto !important;
+                left: 20px !important;
+                top: -8px !important;
+                bottom: auto !important;
+                transform: none !important;
+                border: 8px solid transparent;
+                border-bottom-color: rgba(15, 23, 42, 0.95) !important;
+                border-right-color: transparent !important;
+                border-top-color: transparent !important;
+            }
+
+            .input-wrapper:hover .tooltip-custom,
+            .form-control:focus ~ .tooltip-custom {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-layer"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">🔑</div>
+                <h1>Recuperar Acceso</h1>
+                <span class="tech-slogan">Reset Your Credentials</span>
+                <p id="stepDescription">Ingresa tu email para recuperar tu contraseña</p>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <!-- PASO 1: Solicitar recuperación -->
+            <div class="form-section active" id="section1">
+                <form class="auth-form" id="requestForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">CORREO_ELECTRÓNICO</label>
+                        <input type="email" class="form-control" id="email" placeholder="usuario@dominio.com" required
+                            autocomplete="email">
+                        <small class="text-muted">Ingresa el email asociado a tu cuenta</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="requestBtn">
+                        ENVIAR INSTRUCCIONES
+                    </button>
+                </form>
+            </div>
+
+            <!-- PASO 2: Ingresar token -->
+            <div class="form-section" id="section2">
+                <form class="auth-form" id="tokenForm">
+                    <div class="mb-3">
+                        <label for="token" class="form-label">CÓDIGO DE RECUPERACIÓN</label>
+                        <input type="text" class="form-control" id="token" placeholder="Ej: A1B2C3D4" required
+                            maxlength="8" style="letter-spacing: 2px; text-transform: uppercase; text-align: center;">
+                        <small class="text-muted">Revisa tu bandeja de entrada y spam</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="verifyBtn">
+                        VERIFICAR CÓDIGO
+                    </button>
+                </form>
+            </div>
+
+            <!-- PASO 3: Nueva contraseña -->
+            <div class="form-section" id="section3">
+                <form class="auth-form" id="resetForm">
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">NUEVA CONTRASEÑA</label>
+                        <div class="input-wrapper">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="newPassword"
+                                    placeholder="Ej: MiNuevaClave123" required minlength="8">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                                    👁️
+                                </button>
+                            </div>
+                            <div class="tooltip-custom">
+                                <strong>Requisitos de contraseña:</strong>
+                                <ul>
+                                    <li>Mínimo 8 caracteres</li>
+                                    <li>Al menos 1 letra mayúscula</li>
+                                    <li>Al menos 1 letra minúscula</li>
+                                    <li>Al menos 1 número</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmNewPassword" class="form-label">CONFIRMAR CONTRASEÑA</label>
+                        <div class="input-wrapper">
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmNewPassword"
+                                    placeholder="Repetir nueva contraseña" required minlength="8">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmNewPassword">
+                                    👁️
+                                </button>
+                            </div>
+                            <div class="tooltip-custom">
+                                <strong>Confirmar contraseña:</strong>
+                                <ul>
+                                    <li>Debe coincidir con la contraseña anterior</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="resetBtn">
+                        RESTABLECER CONTRASEÑA
+                    </button>
+                </form>
+            </div>
+
+            <div class="auth-footer">
+                <p><a href="login.html">← Volver a Iniciar Sesión</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const API_URL = 'http://appmov1.grupofmo.com:7055/api/v1';
+        let recoveryToken = '';
+
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `<div class="alert alert-${type}"><span>${message}</span></div>`;
+            setTimeout(() => alertContainer.innerHTML = '', 5000);
+        }
+
+        function goToStep(stepNumber) {
+            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+
+            document.getElementById(`section${stepNumber}`).classList.add('active');
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+
+            for (let i = 1; i < stepNumber; i++) {
+                document.getElementById(`step${i}`).classList.add('completed');
+            }
+
+            // Cambiar texto según el paso
+            const descriptions = {
+                1: 'Ingresa tu email para recuperar tu contraseña',
+                2: 'Ingresa el código que enviamos a tu correo',
+                3: 'Crea una nueva contraseña segura'
+            };
+            
+            document.getElementById('stepDescription').textContent = descriptions[stepNumber];
+        }
+
+        // PASO 1: Solicitar recuperación
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const btn = document.getElementById('requestBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Enviando...';
+
+            try {
+                const response = await fetch(`${API_URL}/recuperacion/solicitar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('Si el email existe, recibirás un código de recuperación. Revisa tu bandeja de entrada.', 'success');
+                    goToStep(2);
+                } else {
+                    showAlert(data.message || 'Error al procesar la solicitud', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión con el servidor', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = 'ENVIAR INSTRUCCIONES';
+        });
+
+        // PASO 2: Verificar token
+        document.getElementById('tokenForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const token = document.getElementById('token').value;
+            const btn = document.getElementById('verifyBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Verificando...';
+
+            try {
+                const response = await fetch(`${API_URL}/recuperacion/verificar/${token}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    recoveryToken = token;
+                    showAlert('Código válido. Ingresa tu nueva contraseña.', 'success');
+                    goToStep(3);
+                } else {
+                    showAlert(data.message || 'Código inválido o expirado', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión con el servidor', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = 'VERIFICAR CÓDIGO';
+        });
+
+        // PASO 3: Restablecer contraseña
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            const btn = document.getElementById('resetBtn');
+
+            if (newPassword !== confirmNewPassword) {
+                showAlert('Las contraseñas no coinciden', 'error');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showAlert('La contraseña debe tener al menos 8 caracteres', 'error');
+                return;
+            }
+
+            if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+                showAlert('La contraseña debe contener al menos una mayúscula, una minúscula y un número', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Restableciendo...';
+
+            try {
+                const response = await fetch(`${API_URL}/recuperacion/restablecer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token: recoveryToken,
+                        nueva_contrasena: newPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showAlert('¡Contraseña restablecida exitosamente! Redirigiendo...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showAlert(data.message || 'Error al restablecer la contraseña', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión con el servidor', 'error');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = 'RESTABLECER CONTRASEÑA';
+        });
+
+        // Toggle password visibility
+        document.getElementById('toggleNewPassword')?.addEventListener('click', function () {
+            const pwd = document.getElementById('newPassword');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+            this.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+        });
+
+        document.getElementById('toggleConfirmNewPassword')?.addEventListener('click', function () {
+            const pwd = document.getElementById('confirmNewPassword');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+            this.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+        });
+
+        function positionTooltips() {
+            document.querySelectorAll('.input-wrapper').forEach(wrapper => {
+                const input = wrapper.querySelector('.form-control');
+                const tooltip = wrapper.querySelector('.tooltip-custom');
+                
+                if (input && tooltip) {
+                    input.addEventListener('mouseenter', () => {
+                        const rect = input.getBoundingClientRect();
+                        tooltip.style.left = `${rect.right + 15}px`;
+                        tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
+                    });
+                    
+                    input.addEventListener('focus', () => {
+                        const rect = input.getBoundingClientRect();
+                        tooltip.style.left = `${rect.right + 15}px`;
+                        tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
+                    });
+                }
+            });
+        }
+
+        positionTooltips();
+
+        window.addEventListener('scroll', positionTooltips);
+        window.addEventListener('resize', positionTooltips);
+    </script>
+</body>
+
+</html>

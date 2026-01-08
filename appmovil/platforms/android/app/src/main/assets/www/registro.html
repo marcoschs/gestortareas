@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - Gestor de Tareas</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #0F172A;
+            min-height: 100vh;
+            color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 2rem 0;
+        }
+
+        /* === FONDO PRINCIPAL === */
+        .background-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background:
+                linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.9)),
+                url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        .background-layer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.2) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .auth-container {
+            position: relative;
+            z-index: 10;
+            padding: 1rem;
+            width: 100%;
+            max-width: 520px;
+        }
+
+        /* === TARJETA CON GLASSMORPHISM CORRECTO === */
+        .auth-card {
+            position: relative;
+            border-radius: 24px;
+            padding: 2.5rem;
+            overflow: hidden;
+        }
+
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            z-index: -1;
+        }
+
+        .auth-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 50%;
+            font-size: 2.5rem;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .auth-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-slogan {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.5);
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .auth-form {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            background: rgba(15, 23, 42, 0.6);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            color: #f8fafc;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15);
+            color: #f8fafc;
+        }
+
+        .form-control::placeholder {
+            color: #64748b;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            padding: 0.85rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 12px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-footer a {
+            color: #FF406E;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .auth-footer a:hover {
+            color: #f87171;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            border-left: 4px solid #22c55e;
+            color: #86efac;
+        }
+
+        .decorative-shape {
+            position: fixed;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .shape-1 {
+            width: 250px;
+            height: 250px;
+            top: -80px;
+            left: -80px;
+        }
+
+        .shape-2 {
+            width: 180px;
+            height: 180px;
+            bottom: 15%;
+            right: -60px;
+        }
+
+        .form-hint {
+            font-size: 0.65rem;
+            color: rgba(148, 163, 184, 0.6); 
+            margin-left: 0.5rem;
+            font-weight: 400;
+        }
+
+        .password-hint {
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.6);
+            margin-top: 0.5rem;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background-layer"></div>
+    <div class="decorative-shape shape-1"></div>
+    <div class="decorative-shape shape-2"></div>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">📋</div>
+                <h1>Crear Cuenta</h1>
+                <span class="tech-slogan">Architect Your Workflow</span>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <form class="auth-form" id="registerForm">
+                <!-- Nombre de Usuario -->
+                <div class="mb-3">
+                    <label for="nombre_usuario" class="form-label">NOMBRE DE USUARIO <small class="form-hint">(mín. 3
+                            caracteres, letras, números y _)</small></label>
+                    <input type="text" class="form-control" id="nombre_usuario" placeholder="juan_perez123" required
+                        autocomplete="username" maxlength="50" minlength="3">
+                </div>
+
+                <!-- Nombres y Apellidos -->
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label for="nombres" class="form-label">NOMBRES</label>
+                        <input type="text" class="form-control" id="nombres" placeholder="Juan" required
+                            autocomplete="given-name" maxlength="50">
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="apellidos" class="form-label">APELLIDOS</label>
+                        <input type="text" class="form-control" id="apellidos" placeholder="Pérez" required
+                            autocomplete="family-name" maxlength="50">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">CORREO ELECTRÓNICO</label>
+                    <input type="email" class="form-control" id="email" placeholder="usuario@dominio.com" required
+                        autocomplete="email" maxlength="100">
+                </div>
+
+                <!-- Contraseñas -->
+                <div class="mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="password" class="form-label">CONTRASEÑA</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="password" placeholder="MiClave123"
+                                    required autocomplete="new-password" minlength="8">
+                                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    👁️
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <label for="confirmPassword" class="form-label">CONFIRMAR CONTRASEÑA</label>
+                            <div class="input-group">
+                                <input type="password" class="form-control" id="confirmPassword"
+                                    placeholder="Repetir contraseña" required autocomplete="new-password" minlength="8">
+                                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                                    👁️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="password-hint">
+                        Mín. 8 caracteres, 1 mayúscula, 1 minúscula, 1 número
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100" id="registerBtn">
+                    CREAR CUENTA
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>¿Ya tienes cuenta? <a href="login.html">Iniciar Sesión</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Auth JS -->
+    <script src="js/auth.js"></script>
+
+    <!-- Toggle Password Visibility -->
+    <script>
+        document.getElementById('togglePassword')?.addEventListener('click', function () {
+            const pwd = document.getElementById('password');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+            this.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+        });
+        document.getElementById('toggleConfirmPassword')?.addEventListener('click', function () {
+            const pwd = document.getElementById('confirmPassword');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+            this.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+        });
+    </script>
+</body>
+
+</html>
